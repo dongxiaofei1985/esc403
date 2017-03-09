@@ -1,9 +1,12 @@
 #1. What is the average altitude where vegetation type is "ice"?
+%sql select  avg(naaltterrainbase.altitude) from naaltterrainbase  ,  navegcovermatthews where navegcovermatthews.vegdescrip='ice' and naaltterrainbase.longitude = navegcovermatthews.longitude and  naaltterrainbase.latitude = navegcovermatthews.latitude ;
 
 
 #2. What is the average altitude for each vegetation type?
+%sql select navegcovermatthews.vegdescrip, avg(naaltterrainbase.altitude) from naaltterrainbase  ,  navegcovermatthews where naaltterrainbase.longitude = navegcovermatthews.longitude and  naaltterrainbase.latitude = navegcovermatthews.latitude    GROUP BY vegdescrip
 
 #3. What is the most frequent vegetation type by altitude?
+%sql select navegcovermatthews.vegdescrip, count(naaltterrainbase.altitude) from naaltterrainbase  ,  navegcovermatthews where naaltterrainbase.longitude = navegcovermatthews.longitude and  naaltterrainbase.latitude = navegcovermatthews.latitude    GROUP BY vegdescrip  ORDER BY count(naaltterrainbase.altitude)  DESC
 
 #4. Is there a correlation between altitude and precipitation?
 
