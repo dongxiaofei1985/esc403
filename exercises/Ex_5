@@ -9,4 +9,8 @@
 %sql select navegcovermatthews.vegdescrip, count(naaltterrainbase.altitude) from naaltterrainbase  ,  navegcovermatthews where naaltterrainbase.longitude = navegcovermatthews.longitude and  naaltterrainbase.latitude = navegcovermatthews.latitude    GROUP BY vegdescrip  ORDER BY count(naaltterrainbase.altitude)  DESC
 
 #4. Is there a correlation between altitude and precipitation?
+result = %sql select  naaltterrainbase.altitude, naprecipwilmott.annualprecip from naaltterrainbase  ,  naprecipwilmott where naaltterrainbase.longitude = naprecipwilmott.longitude and  naaltterrainbase.latitude = naprecipwilmott.latitude ORDER BY naaltterrainbase.altitude ;
 
+altitude, precipitation = zip(*result)
+
+plt.plot(altitude, precipitation)
