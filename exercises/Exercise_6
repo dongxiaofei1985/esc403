@@ -1,0 +1,80 @@
+##1. Make an interactive plot of the earth surface: viewport is selected using sliders.
+
+import cartopy
+import cartopy.crs
+# Create a Cartopy crs for plain  lat-lon projections.
+
+@interact(min_lon=FloatSlider(min=-180, max=180, step=1), max_lon=FloatSlider(min=-180, max=180, step=1), min_lat=FloatSlider(min=-180, max=180, step=1), max_lat=FloatSlider(min=-180, max=180, step=1))
+def earth_surface(min_lon, max_lon, min_lat, max_lat):
+    plain_crs = cartopy.crs.PlateCarree()
+    ax = plt.subplot(111, projection=plain_crs)
+    ax.set_extent((min_lon, max_lon, min_lat, max_lat), crs=plain_crs)
+    ax.gridlines(color='lightgrey', linestyle='-')
+    ax.coastlines()
+    return ax
+    
+## 2. Make an interactive plot of average temperatures in NA: month should be selectable
+
+data = %sql SELECT longitude, latitude, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec FROM natempwilmott 
+lon, lat, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec = zip(* data)
+lon = set(lon)
+lat = set(lat)
+lon = list(lon)
+lat = list(lat)
+lon.sort()
+lat.sort()
+n_lon = len(lon)
+n_lat = len(lat)
+temp_data = np.empty([n_lon, n_lat])
+temp_mask = np.full(temp_data.shape, True, dtype=np.bool)
+lon_to_index = { value:idx for idx, value in enumerate(lon) }
+lat_to_index = { value:idx for idx, value in enumerate(lat) }
+import cmocean
+cm_thermal = cmocean.cm.thermal
+@interact(month=Select(options=['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'], description='Month'))
+
+def fetchdata(month):
+    print month
+    value = month
+    for x, y, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec in data:
+        i = lon_to_index[x]
+        j = lat_to_index[y]
+        if month is 'jan':
+            z = jan
+        elif month is 'feb':
+            z = feb
+        elif month is 'mar':
+            z = mar
+        elif month is 'apr':
+            z = apr
+        elif month is 'may':
+            z = may
+        elif month is 'jun':
+            z = jun
+        elif month is 'jul':
+            z = jul
+        elif month is 'aug':
+            z = aug
+        elif month is 'sep':
+            z = sep
+        elif month is 'oct':
+            z = oct
+        elif month is 'nov':
+            z = nov
+        elif month is 'dec':
+            z = dec
+                     
+        temp_data[i, j] = float(z)
+        temp_mask[i, j] = False        
+    temp = np.ma.array(temp_data, mask=temp_mask)
+    xs = np.array(lon, dtype=np.float)
+    ys = np.array(lat, dtype=np.float)
+
+
+
+    ax = plt.subplot(111, projection=plain_crs)
+    ax.set_extent((-180, -40, 5, 90), crs=plain_crs)
+    ax.gridlines(color='lightgrey', linestyle='-')
+    ax.pcolormesh(xs, ys, temp.T, transform=plain_crs, cmap=cm_thermal)
+    ax.coastlines()
+
