@@ -34,8 +34,6 @@ cm_thermal = cmocean.cm.thermal
 @interact(month=Select(options=['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'], description='Month'))
 
 def fetchdata(month):
-    print month
-    value = month
     for x, y, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec in data:
         i = lon_to_index[x]
         j = lat_to_index[y]
@@ -71,7 +69,7 @@ def fetchdata(month):
     ys = np.array(lat, dtype=np.float)
 
 
-
+    plain_crs = cartopy.crs.PlateCarree()
     ax = plt.subplot(111, projection=plain_crs)
     ax.set_extent((-180, -40, 5, 90), crs=plain_crs)
     ax.gridlines(color='lightgrey', linestyle='-')
