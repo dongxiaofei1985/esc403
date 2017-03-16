@@ -1,0 +1,14 @@
+## 1. How can you compute the "in-degree" of a given vertex?
+%sql select symbol_a, count(*) from y2h_union where symbol_a = 'YCR106W'  group by symbol_a;
+
+## 2. How can you compute the "out-degree" of a given vertex?
+%sql select symbol_b, count(*) from y2h_union  where symbol_b = 'YCR106W' group by symbol_b;
+
+## 3. How can you compute the degree (i.e., regardless of direction) of a given vertex
+%sql select  count(*)  from y2h_union  where symbol_b = 'YCR106W' or symbol_a = 'YCR106W';
+
+## 4. How can you compute the vertex degree distribution?
+result = %sql select symbol as degree, count(*) as times from (select symbol_a, count(*) as symbol from (select symbol_a from y2h_union union all select symbol_b  from y2h_union ) as Q1 group by symbol_a order by symbol ) as Q2 group by symbol
+
+degree, times = zip(*result)
+plt.plot(degree, times)
